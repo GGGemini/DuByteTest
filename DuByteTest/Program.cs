@@ -61,4 +61,6 @@ while (true)
     valueLeft = nextLeftNumberModel.StrNumber;
 }
 
+Console.WriteLine($"Количество красивых чисел: {strList.Count}");
+
 Console.ReadKey();
