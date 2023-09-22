@@ -1,66 +1,56 @@
 ﻿using DuByteTest;
+using System.Diagnostics;
 
 // ИЗМЕНЯЕМЫЕ ПАРАМЕТРЫ
 int sys = 13; // система счисления
-int digitCount = 13; // число из скольки знаков генерируем
-
-var strNumsBase = new string('0', digitCount); // генерируем начальную строку с числами (000...)
+int digitCount = 7; // число из скольки знаков генерируем
 
 int charsCountInPart = digitCount / 2; // равное количество цифр в левой и правой стороне
-bool oddCountNumbers = digitCount % 2 == 1; // нечетное число цифр? (...0.../......)
 
 // ПЕРЕМЕННЫЕ, КОТОРЫЕ ПРИГОДЯТСЯ ПРИ ПОДСЧЁТАХ
 int maxValue = sys - 1; // максимальное значение цифры
 
-var valueLeft = strNumsBase.Remove(charsCountInPart); // левая часть числа
-var valueRightStart = strNumsBase.Substring(digitCount - charsCountInPart);
-var strList = new List<string>();
+var valueLeft = new int[charsCountInPart]; // левая часть числа
+
+ulong totalCount = 0;
+
+var sw = new Stopwatch();
+sw.Start();
 
 while (true)
 {
-    var sumLeftDigits = valueLeft.SumCharDigits();
+    int sumLeftDigits = 0;
+    for (int i = 0; i < valueLeft.Length; i++)
+        sumLeftDigits += valueLeft[i];
 
-    var valueRight = valueRightStart;
+    int[] valueRight = new int[charsCountInPart];
 
     while (true)
     {
-        var sumRightDigits = valueRight.SumCharDigits();
+        int sumRightDigits = 0;
+        for (int i = 0; i < valueRight.Length; i++)
+            sumRightDigits += valueRight[i];
 
         if (sumLeftDigits == sumRightDigits)
         {
-            if (oddCountNumbers)
-            {
-                for (int i = 0; i <= maxValue; i++)
-                {
-                    var value = $"{valueLeft}{i.ToChar()}{valueRight}";
-                    strList.Add(value);
-                    Console.WriteLine(value);
-                }
-            }
-            else
-            {
-                var value = $"{valueLeft}{valueRight}";
-                strList.Add(value);
-                Console.WriteLine(value);
-            }
+            totalCount++;
+            //Console.WriteLine($"{string.Join(',', valueLeft)}*{string.Join(',', valueRight)}");
         }
 
-        var nextRightNumberModel = valueRight.NextNumber(maxValue);
+        var isRightSuccess = Extensions.NextNumber(ref valueRight, maxValue);
 
-        if (!nextRightNumberModel.IsSuccess)
+        if (!isRightSuccess)
             break;
-
-        valueRight = nextRightNumberModel.StrNumber;
     }
 
-    var nextLeftNumberModel = valueLeft.NextNumber(maxValue);
+    var isLeftSuccess = Extensions.NextNumber(ref valueLeft, maxValue);
 
-    if (!nextLeftNumberModel.IsSuccess)
+    if (!isLeftSuccess)
         break;
-
-    valueLeft = nextLeftNumberModel.StrNumber;
 }
 
-Console.WriteLine($"Количество красивых чисел: {strList.Count}");
+sw.Stop();
+
+Console.WriteLine($"Количество красивых чисел: {totalCount/* * Convert.ToUInt64(sys)*/}. Время выполнения: {sw.ElapsedMilliseconds}");
 
 Console.ReadKey();

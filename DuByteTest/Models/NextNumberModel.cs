@@ -1,4 +1,4 @@
 ﻿namespace DuByteTest.Models
 {
-    public record NextNumberModel(string StrNumber, bool IsSuccess = true);
+    public record NextNumberModel(int[] NumArr, bool IsSuccess = true);
 }

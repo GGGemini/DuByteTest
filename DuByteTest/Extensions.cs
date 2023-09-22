@@ -7,15 +7,13 @@ namespace DuByteTest
         public const int charLetterToDigit = 55; // чтобы преобразовать букву в число
         public const int charDigitToDigit = 48; //  чтобы преобразовать число (символ) в число ('0')
 
-        public static NextNumberModel NextNumber(this string numStr, int maxValue)
+        public static bool NextNumber(ref int[] numArr, int maxValue)
         {
-            var newNumChArr = numStr.ToArray();
-            int maxIndex = numStr.Length - 1;
+            int maxIndex = numArr.Length - 1;
             bool needAdded = false;
             for (int i = maxIndex; i >= 0; i--)
             {
-                var ch = numStr[i];
-                int num = ch.ToInt();
+                int num = numArr[i];
 
                 if (i == maxIndex || needAdded)
                 {
@@ -25,7 +23,7 @@ namespace DuByteTest
                     {
                         if (i == 0)
                         {
-                            return new NextNumberModel(numStr, false);
+                            return false;
                         }
 
                         newNum = 0;
@@ -36,7 +34,7 @@ namespace DuByteTest
                         needAdded = false;
                     }
 
-                    newNumChArr[i] = newNum.ToChar();
+                    numArr[i] = newNum;
                 }
                 else
                 {
@@ -44,7 +42,7 @@ namespace DuByteTest
                 }
             }
 
-            return new NextNumberModel(new string(newNumChArr));
+            return true;
         }
 
         public static int SumCharDigits(this string numStr)
