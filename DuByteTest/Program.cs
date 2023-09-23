@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 // ИЗМЕНЯЕМЫЕ ПАРАМЕТРЫ
 int sys = 13; // система счисления
-int digitCount = 7; // число из скольки знаков генерируем
+int digitCount = 13; // число из скольки знаков генерируем
 
 int charsCountInPart = digitCount / 2; // равное количество цифр в левой и правой стороне
 
@@ -17,23 +17,30 @@ ulong totalCount = 0;
 var sw = new Stopwatch();
 sw.Start();
 
+var sumsBuffer = new List<int>();
+
 while (true)
 {
-    int sumLeftDigits = 0;
-    for (int i = 0; i < valueLeft.Length; i++)
-        sumLeftDigits += valueLeft[i];
+    int sumLeftDigits = valueLeft.Sum();
+
+    if (sumsBuffer.Contains(sumLeftDigits))
+    {
+        Extensions.NextNumber(ref valueLeft, maxValue);
+        continue;
+    }
+
+    sumsBuffer.Add(sumLeftDigits);
 
     int[] valueRight = new int[charsCountInPart];
+    ulong sameNums = 0;
 
     while (true)
     {
-        int sumRightDigits = 0;
-        for (int i = 0; i < valueRight.Length; i++)
-            sumRightDigits += valueRight[i];
+        int sumRightDigits = valueRight.Sum();
 
         if (sumLeftDigits == sumRightDigits)
         {
-            totalCount++;
+            sameNums++;
             //Console.WriteLine($"{string.Join(',', valueLeft)}*{string.Join(',', valueRight)}");
         }
 
@@ -43,6 +50,8 @@ while (true)
             break;
     }
 
+    totalCount += sameNums * sameNums;
+
     var isLeftSuccess = Extensions.NextNumber(ref valueLeft, maxValue);
 
     if (!isLeftSuccess)
@@ -51,6 +60,6 @@ while (true)
 
 sw.Stop();
 
-Console.WriteLine($"Количество красивых чисел: {totalCount/* * Convert.ToUInt64(sys)*/}. Время выполнения: {sw.ElapsedMilliseconds}");
+Console.WriteLine($"Количество красивых чисел: {totalCount * Convert.ToUInt64(sys)}. Время выполнения: {sw.ElapsedMilliseconds}");
 
 Console.ReadKey();
